@@ -1,6 +1,6 @@
-# 🌍 Project Earthquakes Data Pipeline
+# Project Earthquakes Data Pipeline
 
-โปรเจกต์นี้คือการจำลองระบบ Data Pipeline แบบ End-to-End โดยใช้ Apache Airflow เพื่อดึงข้อมูลเหตุการณ์แผ่นดินไหวล่าสุดจาก Public API, ประมวลผล และจัดเก็บในฐานข้อมูลเชิงพื้นที่ (Spatial Database) เพื่อพร้อมนำไปแสดงผลผ่าน API
+โปรเจกต์นี้คือการจำลองระบบ Data Pipeline แบบ End-to-End โดยใช้ **Apache Airflow** เพื่อดึงข้อมูลเหตุการณ์แผ่นดินไหวล่าสุดจาก Public API, ประมวลผล, และจัดเก็บในฐานข้อมูลเชิงพื้นที่ (**PostGIS**) เพื่อพร้อมนำไปแสดงผลผ่าน API (**FastAPI**).
 
 ---
 
@@ -16,7 +16,7 @@
 
 ---
 
-## 📦 แหล่งข้อมูล (Data Sources)
+## แหล่งข้อมูล (Data Sources)
 
 * **Public API:** (ระบุชื่อ API ถ้าทราบ เช่น **USGS Earthquake API**)
 
@@ -24,27 +24,32 @@
 
 ## 📈 สถาปัตยกรรมและ Workflow Diagram
 
+นี่คือแผนภาพแสดงขั้นตอนการทำงานของ Data Pipeline ทั้งหมด:
+
 ```mermaid
 flowchart TD
-    subgraph S[Source]
-        A[Public API (USGS, etc.)]
-    end
+subgraph S[Source]
+A[Public API (USGS, etc.)]
+end
 
-    subgraph ETL[ETL Pipeline (Managed by Airflow)]
-        B[Task 1: Extract Data] --> C[Task 2: Transform / Clean & Geo-Process]
-        C --> D[Task 3: Load Data to PostGIS]
-    end
+subgraph ETL[ETL Pipeline (Managed by Airflow)]
+B[Task 1: Extract Data] --> C[Task 2: Transform / Clean & Geo-Process]
+C --> D[Task 3: Load Data to PostGIS]
+end
 
-    subgraph DW[Data Warehouse & Serving Layer]
-        P[PostgreSQL / PostGIS Tables]
-    end
-    
-    subgraph API[Serving API (FastAPI)]
-        E[FastAPI Application] --> F{Query Summary Data By Hour}
-        F --> G[Public API Endpoint]
-    end
+subgraph DW[Data Warehouse & Serving Layer]
+P[PostgreSQL / PostGIS Tables]
+end
 
-    A --> B
-    D --> P
-    P --> F
-    G
+subgraph API[Serving API (FastAPI)]
+E[FastAPI Application]
+E --> F{Query Summary Data By Hour}
+G[Public API Endpoint]
+end
+
+A --> B
+B --> C
+C --> D
+D --> P
+P --> F
+F --> G
