@@ -25,31 +25,12 @@
 ## สถาปัตยกรรมและ Workflow Diagram
 
 นี่คือแผนภาพแสดงขั้นตอนการทำงานของ Data Pipeline ทั้งหมด:
-
+## **Workflow Diagram**
 ```mermaid
 flowchart TD
-subgraph S[Source]
-A[Public API (USGS, etc.)]
-end
-
-subgraph ETL[ETL Pipeline (Managed by Airflow)]
-B[Task 1: Extract Data] --> C[Task 2: Transform / Clean & Geo-Process]
-C --> D[Task 3: Load Data to PostGIS]
-end
-
-subgraph DW[Data Warehouse & Serving Layer]
-P[PostgreSQL / PostGIS Tables]
-end
-
-subgraph API[Serving API (FastAPI)]
-E[FastAPI Application]
-E --> F{Query Summary Data By Hour}
-G[Public API Endpoint]
-end
-
-A --> B
-B --> C
-C --> D
-D --> P
-P --> F
-F --> G
+    A[Public API] --> |Airflow| B
+    B[Task 1: Extract Data] --> C
+    C[Task 2: Transform / Clean] --> D
+    D[Task 3: Load Data to PostGIS] --> E
+    E[Create API] 
+```
