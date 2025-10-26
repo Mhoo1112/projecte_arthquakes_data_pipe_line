@@ -70,7 +70,7 @@ text_query = sqlalchemy.text(f"""
 """)
 
 @app_api.get(
-    "/earthquakes/summary/hourly", # URL ที่ผู้ใช้จะเรียกใช้
+    "/count_earthquake_per_hour", # URL ที่ผู้ใช้จะเรียกใช้
     response_model=List[Mag_earthquakes], # บอกว่า Output ต้องเป็นรายการ (List) ของข้อมูลแผ่นดินไหว
     summary="ดึงข้อมูลจำนวนแผ่นดินไหวล่าสุด",
     description="ดึงรายการแผ่นดินไหวล่าสุดตามจำนวนที่กำหนด จาก PostGIS",
