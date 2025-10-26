@@ -7,7 +7,7 @@ from scripts.load import load_geojson
 
 
 with DAG(
-    dag_id="etl_earthquakes",
+    dag_id="etl_earthquakes_api",
     start_date=datetime(2025, 1, 1),
     schedule="@hourly",
     catchup=False,
@@ -39,4 +39,4 @@ with DAG(
     )
 
     t1 >> t2 >> t3
-    # ...4
+    # ...tt

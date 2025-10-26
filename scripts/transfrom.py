@@ -56,6 +56,23 @@ def transfrom_geojson(**kwargs):
         geo_df['time'] = pandas.to_datetime(geo_df['time'], unit='ms', utc=True)
         geo_df['updated'] = pandas.to_datetime(geo_df['updated'], unit='ms', utc=True)
 
+        # เปลี่ยนชื่อคอลัมน์
+        geo_df['magtype'] = geo_df['magType']
+
+        # เลือกคอลัมน์ที่จะลบ
+        columns_to_drop = ['magType']
+        geo_df = geo_df.drop(columns_to_drop, axis=1)
+
+        # แปลงชนิดของข้อมูล nst dmin gap
+        geo_df['nst'] = pandas.to_numeric(geo_df['nst'], errors='coerce')
+        geo_df['nst'] = geo_df['nst'].fillna(0).astype('int64')
+
+        geo_df['dmin'] = pandas.to_numeric(geo_df['dmin'], errors='coerce')
+        geo_df['dmin'] = geo_df['dmin'].fillna(0).astype('float64')
+        
+        geo_df['gap'] = pandas.to_numeric(geo_df['gap'], errors='coerce')
+        geo_df['gap'] = geo_df['gap'].fillna(0).astype('float64')
+        
 
                                                 # geo_df['time_event_date'] = pandas.to_datetime(geo_df['time'].dt.date)
                                                 # geo_df['time_event_hour'] = geo_df['time'].dt.strftime('%H:%M:%S')
@@ -72,6 +89,7 @@ def transfrom_geojson(**kwargs):
                                                 # # ลบคอลัมน์ ['time', 'updated']
                                                 # geo_df = geo_df.drop(columns_to_drop, axis=1)
                                                 # # cleaned_geo_df = geo_df.drop(columns_to_drop, axis=1, inplace=True/False)
+                                                # # geo_df = geo_df.rename(columns={'magType': 'magtype'})
 
 
                                                 # # ดูรูปแบบข้อมูล
@@ -133,12 +151,14 @@ def transfrom_geojson(**kwargs):
             'status',
             'tsunami',
             'sig',
-            'net',
-            'code',
-            'sources',
-            'types',
-            'type',
             'ids',
+            'sources',
+            'nst',
+            'dmin',
+            'rms',
+            'gap',
+            'magtype',
+            'type',
             'time_add']
 
         cleaned_geo_df = geo_df[select_column]

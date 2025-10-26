@@ -49,7 +49,7 @@ def load_geojson(database_url, **kwargs):
         processed_file.to_postgis(
             name = TABLE_NAME,
             con = engine,
-            if_exists = 'append',
+            if_exists = 'replace',
             index = False,
             # crs = processed_file.crs.to_string(),
             dtype = {'geometry': 'GEOMETRY(Point, 4326)'}
@@ -91,12 +91,14 @@ def load_geojson(database_url, **kwargs):
             'status',
             'tsunami',
             'sig',
-            'net',
-            'code',
-            'sources',
-            'types',
-            'type',
             'ids',
+            'sources',
+            'nst',
+            'dmin',
+            'rms',
+            'gap',
+            'magtype',
+            'type',
             'time_add']
 
             # รวมชื่อของคอลัมน์
@@ -105,13 +107,13 @@ def load_geojson(database_url, **kwargs):
             # query เพื่อลบข้อมูลที่ซ้ำ
             duplicates_query = sqlalchemy.text(f"""
             WITH t_dup AS (
-                SELECT code,
+                SELECT ids,
                     ROW_NUMBER() OVER(PARTITION BY {column_string} ORDER BY time_add DESC ) AS row_num
                 FROM {TABLE_NAME}
             )
             DELETE FROM {TABLE_NAME}
-            WHERE code NOT IN (
-                SELECT code FROM t_dup 
+            WHERE ids NOT IN (
+                SELECT ids FROM t_dup 
                 WHERE row_num = 1
             );
             """)
