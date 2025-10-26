@@ -135,6 +135,8 @@ def transfrom_geojson(**kwargs):
         else:
             print(f"CRS ถูกต้องแล้ว ({TARGET_CRS}) ไม่ต้องแปลงเป็น EPSG:4326")
         
+        print(f"ระบบพิกัดปัจจุบัน คือ: {geo_df.crs}")
+        
         print(f"\n{SUB_SEPARATOR}")
 
         # ------------------------------------------------
