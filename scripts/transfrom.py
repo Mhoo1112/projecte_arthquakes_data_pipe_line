@@ -5,6 +5,7 @@ import requests
 import os
 import datetime
 import pytz
+import time
 
 
 SEPARATOR = "=" * 80
@@ -52,9 +53,9 @@ def transfrom_geojson(**kwargs):
                 geo_df[col] = geo_df[col].str.strip().str.lstrip(',')
 
 
-        # เข้าถึงข้อมูลแต่ละคอลัมน์เพื่อแปลงประเภทของข้อมูล
-        geo_df['time'] = pandas.to_datetime(geo_df['time'], unit='ms', utc=True)
-        geo_df['updated'] = pandas.to_datetime(geo_df['updated'], unit='ms', utc=True)
+                                                # # เข้าถึงข้อมูลแต่ละคอลัมน์เพื่อแปลงประเภทของข้อมูล
+                                                # geo_df['time'] = pandas.to_datetime(geo_df['time'], unit='ms', utc=True)
+                                                # geo_df['updated'] = pandas.to_datetime(geo_df['updated'], unit='ms', utc=True)
 
         # เปลี่ยนชื่อคอลัมน์
         geo_df['magtype'] = geo_df['magType']
@@ -108,12 +109,12 @@ def transfrom_geojson(**kwargs):
                                                 # # ------------------------------------------------
 
 
-        # เพิ่มคอลัมน์ time_add เวลาที่ถูกบันทึกลงฐานข้อมูล ณ ปัจจุบัน
-        tz = pytz.timezone('Asia/Bangkok')
-        # geo_df['time_add'] = pandas.to_datetime(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        geo_df['time_add'] = geo_df['time_add'] = datetime.datetime.now(tz)
-
-
+                                            # # เพิ่มคอลัมน์ time_add เวลาที่ถูกบันทึกลงฐานข้อมูล ณ ปัจจุบัน
+                                            # tz = pytz.timezone('Asia/Bangkok')
+                                            # geo_df['time_add'] = pandas.to_datetime(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                                            # geo_df['time_add'] = geo_df['time_add'] = datetime.datetime.now(tz)
+        current_time_seconds = time.time()
+        geo_df['time_add'] = int(current_time_seconds * 1000)
         # ลบข้อมูลที่ซ้ำกัน
         geo_df = geo_df.drop_duplicates(inplace=False)
         # geo_df.drop_duplicates(inplace=True)

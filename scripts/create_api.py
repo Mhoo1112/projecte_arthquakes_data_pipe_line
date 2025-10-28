@@ -53,7 +53,7 @@ TABLE_NAME = 'earthquakes'
 # Query ข้อมูลที่ต้องการจะสร้าง API
 text_query = sqlalchemy.text(f"""
     SELECT
-        DATE_TRUNC('hour', TIMEZONE('Asia/Bangkok', NOW())) AS hour_of_day,
+        DATE_TRUNC('hour',TIMEZONE('Asia/Bangkok',TO_TIMESTAMP(time/1000))) AS hour_of_day,
         COUNT(CASE WHEN mag >= 0.00 AND mag < 10.00 THEN 1 ELSE NULL END) AS mag_total,
         COUNT(CASE WHEN mag >= 0.00 AND mag < 1.00 THEN 1 ELSE NULL END) AS mag_000_to_099,
         COUNT(CASE WHEN mag >= 1.00 AND mag < 2.00 THEN 1 ELSE NULL END) AS mag_100_to_199,
@@ -66,7 +66,8 @@ text_query = sqlalchemy.text(f"""
         COUNT(CASE WHEN mag >= 8.00 AND mag < 9.00 THEN 1 ELSE NULL END) AS mag_800_to_899,
         COUNT(CASE WHEN mag >= 9.00 AND mag < 10.00 THEN 1 ELSE NULL END) AS mag_900_to_999
     FROM earthquakes
-    WHERE DATE_TRUNC('hour', TIMEZONE('Asia/Bangkok', "time")) = DATE_TRUNC('hour', TIMEZONE('Asia/Bangkok', NOW() - INTERVAL '1 hour'));
+    WHERE DATE_TRUNC('hour',TIMEZONE('Asia/Bangkok',TO_TIMESTAMP(time/1000))) >= DATE_TRUNC('day',TIMEZONE('Asia/Bangkok',NOW()))
+    GROUP BY hour_of_day;
 """)
 
 @app_api.get(
@@ -97,20 +98,3 @@ def create_api_get_hourly_earthquake_summary():
     except Exception as e:
         # จัดการข้อผิดพลาดฐานข้อมูล
         raise HTTPException(status_code=500, detail=f"Database connection or query failed: {str(e)}")
-
-
-
-    # SELECT
-    #     DATE_TRUNC('hour', TIMEZONE('Asia/Bangkok', NOW())) AS hour_of_day,
-    #     COUNT(CASE WHEN mag >= 0.00 AND mag < 1.00 THEN 1 ELSE NULL END) AS mag_000_to_099,
-    #     COUNT(CASE WHEN mag >= 1.00 AND mag < 2.00 THEN 1 ELSE NULL END) AS mag_100_to_199,
-    #     COUNT(CASE WHEN mag >= 2.00 AND mag < 3.00 THEN 1 ELSE NULL END) AS mag_200_to_299,
-    #     COUNT(CASE WHEN mag >= 3.00 AND mag < 4.00 THEN 1 ELSE NULL END) AS mag_300_to_399,
-    #     COUNT(CASE WHEN mag >= 4.00 AND mag < 5.00 THEN 1 ELSE NULL END) AS mag_400_to_499,
-    #     COUNT(CASE WHEN mag >= 5.00 AND mag < 6.00 THEN 1 ELSE NULL END) AS mag_500_to_599,
-    #     COUNT(CASE WHEN mag >= 6.00 AND mag < 7.00 THEN 1 ELSE NULL END) AS mag_600_to_699,
-    #     COUNT(CASE WHEN mag >= 7.00 AND mag < 8.00 THEN 1 ELSE NULL END) AS mag_700_to_799,
-    #     COUNT(CASE WHEN mag >= 8.00 AND mag < 9.00 THEN 1 ELSE NULL END) AS mag_800_to_899,
-    #     COUNT(CASE WHEN mag >= 9.00 AND mag < 10.00 THEN 1 ELSE NULL END) AS mag_900_to_999
-    # FROM earthquakes
-    # WHERE DATE_TRUNC('hour', TIMEZONE('Asia/Bangkok', "time")) = DATE_TRUNC('hour', TIMEZONE('Asia/Bangkok', NOW() - INTERVAL '1 hour'));

@@ -49,7 +49,7 @@ def load_geojson(database_url, **kwargs):
         processed_file.to_postgis(
             name = TABLE_NAME,
             con = engine,
-            if_exists = 'replace',
+            if_exists = 'append',
             index = False,
             # crs = processed_file.crs.to_string(),
             dtype = {'geometry': 'GEOMETRY(Point, 4326)'}
