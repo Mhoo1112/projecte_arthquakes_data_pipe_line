@@ -14,6 +14,8 @@ SUB_SEPARATOR = "-" * 80
 # ----- transfrom geojson -----
 def transfrom_geojson(**kwargs):
 
+    raise Exception("SMTP Test Failure: Task extract_geojson was intentionally failed to test email notification.")
+
     ti = kwargs['ti']
     try:
         path_file_name = kwargs['ti'].xcom_pull(key='raw_file_path',task_ids='extract_geojson')
